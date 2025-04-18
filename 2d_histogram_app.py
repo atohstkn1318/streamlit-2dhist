@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import io  # これが重要！
+import io  
 
 # タイトル
 st.title("2Dヒストグラム可視化アプリ")
@@ -39,7 +39,7 @@ if uploaded_file is not None:
         buf = io.BytesIO()
         fig.savefig(buf, format="png")
         st.download_button(
-            label="📥 このヒストグラム画像を保存",
+            label="このヒストグラム画像を保存",
             data=buf.getvalue(),
             file_name="histogram.png",
             mime="image/png"
