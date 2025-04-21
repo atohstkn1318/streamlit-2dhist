@@ -23,20 +23,36 @@ if uploaded_file is not None:
         y = df["CH2(ch)"]
         z = df["Counts"]
 
-        # カラースケール用スライダー
-        vmin = st.slider("最小カウント (vmin)", 0, int(z.max()), 0)
-        vmax = st.slider("最大カウント (vmax)", 1, int(z.max()), int(z.max()))
+        # ——— カウント範囲を１本のスライダーで指定 ———
+        counts_min, counts_max = st.slider(
+            "Counts 範囲を選択",
+            0,
+            int(z.max()),
+            (0, int(z.max()))
+        )
 
-        # x軸レンジ用スライダー（0〜x.max()）
-        x_min = st.slider("X軸 最小値", 0, int(x.max()), 0)
-        x_max = st.slider("X軸 最大値", 0, int(x.max()), int(x.max()))
+        # ——— X軸レンジを１本のスライダーで指定 ———
+        x_min, x_max = st.slider(
+            "X軸 範囲を選択",
+            0,
+            int(x.max()),
+            (0, int(x.max()))
+        )
 
-        # y軸レンジ用スライダー（0〜y.max()）
-        y_min = st.slider("Y軸 最小値", 0, int(y.max()), 0)
-        y_max = st.slider("Y軸 最大値", 0, int(y.max()), int(y.max()))
+        # ——— Y軸レンジを１本のスライダーで指定 ———
+        y_min, y_max = st.slider(
+            "Y軸 範囲を選択",
+            0,
+            int(y.max()),
+            (0, int(y.max()))
+        )
 
-        # 範囲でフィルタリング
-        mask = (x >= x_min) & (x <= x_max) & (y >= y_min) & (y <= y_max)
+        # フィルタリング
+        mask = (
+            (x >= x_min) & (x <= x_max) &
+            (y >= y_min) & (y <= y_max) &
+            (z >= counts_min) & (z <= counts_max)
+        )
         x_f = x[mask]
         y_f = y[mask]
         z_f = z[mask]
@@ -52,8 +68,8 @@ if uploaded_file is not None:
             bins=[x_bins, y_bins],
             weights=z_f,
             cmap='turbo',
-            vmin=vmin,
-            vmax=vmax,
+            vmin=counts_min,
+            vmax=counts_max,
         )
         ax.set_xlabel("CH1 (ch)")
         ax.set_ylabel("CH2 (ch)")
