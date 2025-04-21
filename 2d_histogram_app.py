@@ -17,30 +17,31 @@ if uploaded_file is not None:
     else:
         df = pd.read_excel(uploaded_file, skiprows=45)
 
+    # 必要カラムがあるかチェック
     if {"CH1(ch)", "CH2(ch)", "Counts"}.issubset(df.columns):
         x = df["CH1(ch)"]
         y = df["CH2(ch)"]
         z = df["Counts"]
 
         # カラースケール用スライダー
-        vmin = st.slider("最小カウント (vmin)", min_value=0, max_value=int(z.max()), value=0)
-        vmax = st.slider("最大カウント (vmax)", min_value=1, max_value=int(z.max()), value=int(z.max()))
+        vmin = st.slider("最小カウント (vmin)", 0, int(z.max()), 0)
+        vmax = st.slider("最大カウント (vmax)", 1, int(z.max()), int(z.max()))
 
-        # x軸レンジ用スライダー
-        x_min = st.slider("X軸 最小値", int(x.min()), int(x.max()), int(x.min()))
-        x_max = st.slider("X軸 最大値", int(x.min()), int(x.max()), int(x.max()))
+        # x軸レンジ用スライダー（0〜x.max()）
+        x_min = st.slider("X軸 最小値", 0, int(x.max()), 0)
+        x_max = st.slider("X軸 最大値", 0, int(x.max()), int(x.max()))
 
-        # y軸レンジ用スライダー
-        y_min = st.slider("Y軸 最小値", int(y.min()), int(y.max()), int(y.min()))
-        y_max = st.slider("Y軸 最大値", int(y.min()), int(y.max()), int(y.max()))
+        # y軸レンジ用スライダー（0〜y.max()）
+        y_min = st.slider("Y軸 最小値", 0, int(y.max()), 0)
+        y_max = st.slider("Y軸 最大値", 0, int(y.max()), int(y.max()))
 
-        # 指定範囲でフィルタリング
+        # 範囲でフィルタリング
         mask = (x >= x_min) & (x <= x_max) & (y >= y_min) & (y <= y_max)
         x_f = x[mask]
         y_f = y[mask]
         z_f = z[mask]
 
-        # ヒストグラム用ビン
+        # ビンを 1 チャンネル刻みで作成
         x_bins = np.arange(x_min, x_max + 1)
         y_bins = np.arange(y_min, y_max + 1)
 
@@ -70,5 +71,6 @@ if uploaded_file is not None:
             file_name="histogram.png",
             mime="image/png"
         )
+
     else:
         st.error("必要なカラム（CH1(ch), CH2(ch), Counts）が見つかりません。")
